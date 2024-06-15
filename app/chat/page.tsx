@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from '@nextui-org/input';
 import { PiPaperPlaneTilt } from 'react-icons/pi';
 import { CircularProgress } from '@nextui-org/progress';
+import clsx from 'clsx';
 
 import { SearchIcon } from '@/components/icons';
-import { Button } from '@nextui-org/button';
-import clsx from 'clsx';
+import env from '@/config/env';
 
 type HistoryType = {
   message: string;
@@ -19,28 +19,54 @@ const ChatPage = () => {
   const [history, setHistory] = useState([] as HistoryType[]);
   const [loading, setLoading] = useState(false);
 
-  const handleNewChat = () => {
+  const handleNewChat = async () => {
     if (!search) return;
     const newUserMessage = {
       message: search,
       user: 'user',
     };
+
     setHistory((prev) => [...prev, newUserMessage]);
     setLoading(true);
-    setTimeout(() => {
-      const newBotMessage = {
-        message: 'I am a bot',
-        user: 'bot',
-      };
-      setHistory((prev) => [...prev, newBotMessage]);
-      setLoading(false);
-    }, 1000);
+    try {
+      const newBotMessage = await fetch(`${env.apiUrl}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: `${history.slice(1).slice(-3).map((m)=>m.message)} ${search}`,
+        }),
+      }).then((res) => res.json());
+
+      setHistory((prev) => [
+        ...prev,
+        {
+          message: newBotMessage,
+          user: 'bot',
+        },
+      ]);
+    } catch (error) {
+      console.error(error);
+    }
+    setLoading(false);
     setSearch('');
   };
 
+  useEffect(() => {
+    if (history.length !== 0) {
+      localStorage.setItem('history', JSON.stringify(history));
+    }
+  }, [history]);
+
+  useEffect(() => {
+    const localHistory = JSON.parse(localStorage.getItem('history') || '[]');
+    setHistory([...localHistory]);
+  }, []);
+
   return (
     <div className="h-[75dvh] flex gap-5 flex-col">
-      <div className="h-full overflow-y-scroll scrollbar-hide flex flex-col gap-4">
+      <div className="h-full overflow-y-scroll scrollbar-hide flex flex-col gap-2">
         {history.map((item, index) => (
           <div
             key={index}
@@ -68,28 +94,28 @@ const ChatPage = () => {
           inputWrapper: 'bg-default-100 h-14',
           input: 'text-sm',
         }}
-        labelPlacement="outside"
-        value={search}
         disabled={loading}
-        onValueChange={setSearch}
-        placeholder="Ask something..."
-        startContent={
-          <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-        }
         endContent={
           <button
-            disabled={loading}
-            onClick={handleNewChat}
             className={clsx(
               'p-2 text-white rounded-2xl transition',
               loading && 'cursor-not-allowed bg-default-200 text-default-400',
-              !loading && 'bg-gradient-to-tr from-lime-600 to-sky-600 cursor-pointer'
+              !loading && 'bg-gradient-to-tr from-fuchsia-600 to-sky-600 cursor-pointer'
             )}
+            disabled={loading}
+            onClick={handleNewChat}
           >
             <PiPaperPlaneTilt className="size-6" />
           </button>
         }
+        labelPlacement="outside"
+        placeholder="Ask something..."
+        startContent={
+          <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
+        }
         type="search"
+        value={search}
+        onValueChange={setSearch}
       />
     </div>
   );

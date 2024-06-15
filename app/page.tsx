@@ -19,11 +19,10 @@ export default function Home() {
 
       <div className="flex gap-3">
         <Link
-          className={buttonStyles({
-            color: 'primary',
+          className={`${buttonStyles({
             radius: 'full',
             variant: 'shadow',
-          })}
+          })} bg-sky-500 text-white`}
           href="login"
         >
           Login to get started
