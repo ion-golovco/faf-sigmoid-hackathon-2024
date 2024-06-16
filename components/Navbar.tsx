@@ -52,8 +52,8 @@ export function Navbar() {
   }, [user]);
 
   return (
-    <NextUINavbar maxWidth="xl" position="sticky">
-      <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
+    <NextUINavbar className="h-16" maxWidth="xl" position="sticky">
+      <NavbarContent className="basis-1/5 sm:basis-full h-20 pb-0" justify="start">
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <Image alt="Informal" height={32} src="/logo.svg" width={32} />

@@ -114,7 +114,7 @@ const ChatPage = () => {
   }, []);
 
   return (
-    <div className="h-[75dvh] flex gap-5 flex-col">
+    <div className="h-[78dvh] flex gap-5 flex-col">
       <div className="h-full overflow-y-scroll scrollbar-hide flex flex-col gap-2">
         {history.map((item, index) => (
           <div
@@ -178,9 +178,9 @@ const ChatPage = () => {
           </div>
         )}
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 overflow-x-scroll scrollbar-hide h-12">
         <button
-          className={clsx('p-2 rounded-2xl transition ')}
+          className={clsx('p-1 px-2 rounded-2xl transition ')}
           onClick={resetChat}
         >
           <PiTrash className="size-6" />
@@ -189,7 +189,7 @@ const ChatPage = () => {
           <button
             key={cat.id}
             className={clsx(
-              'p-2 rounded-2xl transition',
+              'p-1 px-2 rounded-2xl transition',
               category === cat.id ? 'bg-fuchsia-600 text-white' : 'bg-default-100 text-default-900'
             )}
             onClick={() => setCategory(cat.id)}
