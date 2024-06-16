@@ -23,7 +23,7 @@ export default function Home() {
             radius: 'full',
             variant: 'shadow',
           })} bg-sky-500 text-white`}
-          href="login"
+          href="chat"
         >
           Login to get started
         </Link>

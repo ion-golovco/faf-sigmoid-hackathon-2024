@@ -8,13 +8,47 @@ import clsx from 'clsx';
 
 import { SearchIcon } from '@/components/icons';
 import env from '@/config/env';
+import Link from 'next/link';
+
+type Product = {
+  id: number;
+  name: string;
+  description: string;
+  img?: string;
+  buy?: string;
+};
+
+const categories = [
+  {
+    name: 'Phones',
+    id: 'phone',
+  },
+  {
+    name: 'Laptops',
+    id: 'laptop',
+  },
+  {
+    name: 'Tablets',
+    id: 'tablet',
+  },
+  {
+    name: 'Fridge',
+    id: 'refrigerator',
+  },
+  {
+    name: 'Cars',
+    id: 'car',
+  },
+];
 
 type HistoryType = {
   message: string;
+  products?: Product[];
   user?: string;
 };
 
 const ChatPage = () => {
+  const [category, setCategory] = useState(categories[0].id as string);
   const [search, setSearch] = useState('' as string);
   const [history, setHistory] = useState([] as HistoryType[]);
   const [loading, setLoading] = useState(false);
@@ -29,20 +63,25 @@ const ChatPage = () => {
     setHistory((prev) => [...prev, newUserMessage]);
     setLoading(true);
     try {
-      const newBotMessage = await fetch(`${env.apiUrl}/chat`, {
+      const response = await fetch(`${env.apiUrl}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: `${history.slice(1).slice(-3).map((m)=>m.message)} ${search}`,
+          message: `${history
+            .slice(1)
+            .slice(-3)
+            .map((m) => m.message)} ${search}`,
+          category,
         }),
       }).then((res) => res.json());
 
       setHistory((prev) => [
         ...prev,
         {
-          message: newBotMessage,
+          message: response.message,
+          products: response?.products,
           user: 'bot',
         },
       ]);
@@ -74,10 +113,34 @@ const ChatPage = () => {
           >
             <div
               className={`${
-                item?.user === 'user' ? 'bg-sky-500 text-white' : 'bg-default-100 text-default-900'
+                item?.user === 'user'
+                  ? 'bg-gradient-to-tr from-fuchsia-600 to-sky-600 text-white'
+                  : 'bg-default-100 text-default-900'
               } p-3 rounded-2xl`}
             >
               {item.message}
+              {item.products && (
+                <div className="grid lg:grid-cols-4 grid-cols-2 gap-2 mt-2">
+                  {item.products.map((product) => (
+                    <div
+                      key={product.id}
+                      className="flex gap-1 bg-default-200 p-2 rounded-2xl h-28 hover:scale-105 transition"
+                    >
+                      <Link href={product.buy || '/'}>
+                        <img
+                          src={product.img}
+                          alt={product.name}
+                          className="w-24 h-full object-cover rounded-xl"
+                        />
+                      </Link>
+                      <div>
+                        <p className="text-sm font-semibold">{product.name}</p>
+                        <p className="text-sm">{product.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -88,6 +151,20 @@ const ChatPage = () => {
             </div>
           </div>
         )}
+      </div>
+      <div className="flex gap-2">
+        {categories.map((cat) => (
+          <button
+            key={cat.id}
+            className={clsx(
+              'p-2 rounded-2xl transition',
+              category === cat.id ? 'bg-fuchsia-600 text-white' : 'bg-default-100 text-default-900'
+            )}
+            onClick={() => setCategory(cat.id)}
+          >
+            {cat.name}
+          </button>
+        ))}
       </div>
       <Input
         classNames={{
@@ -100,7 +177,7 @@ const ChatPage = () => {
             className={clsx(
               'p-2 text-white rounded-2xl transition',
               loading && 'cursor-not-allowed bg-default-200 text-default-400',
-              !loading && 'bg-gradient-to-tr from-fuchsia-600 to-sky-600 cursor-pointer'
+              !loading && 'bg-fuchsia-600 cursor-pointer'
             )}
             disabled={loading}
             onClick={handleNewChat}
