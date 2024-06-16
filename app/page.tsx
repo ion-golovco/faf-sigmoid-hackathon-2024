@@ -25,7 +25,7 @@ export default function Home() {
           })} bg-sky-500 text-white`}
           href="chat"
         >
-          Login to get started
+          Lets get started
         </Link>
       </div>
     </section>
