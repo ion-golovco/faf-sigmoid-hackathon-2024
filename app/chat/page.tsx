@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Input } from '@nextui-org/input';
-import { PiPaperPlaneTilt } from 'react-icons/pi';
+import { PiPaperPlaneTilt, PiTrash } from 'react-icons/pi';
 import { CircularProgress } from '@nextui-org/progress';
 import clsx from 'clsx';
 
@@ -55,6 +55,11 @@ const ChatPage = () => {
   const [history, setHistory] = useState([] as HistoryType[]);
   const [loading, setLoading] = useState(false);
 
+  const resetChat = () => {
+    setHistory([]);
+    localStorage.removeItem('history');
+  };
+
   const handleNewChat = async () => {
     if (!search) return;
     const newUserMessage = {
@@ -65,10 +70,10 @@ const ChatPage = () => {
     setHistory((prev) => [...prev, newUserMessage]);
     setLoading(true);
     try {
-      const prompt = `-user:${search}- ${history
-        .slice(-2)
-        .map((m) => `-${m.user}: ${m.message}-`)
-        .reverse()}`;
+      const prompt = `user:${search} ${history
+        .slice(-1)
+        .map((item) => `${item.user}: ${item.message}`)
+        .join(' ')}`;
       console.log(prompt);
 
       const response = await fetch(`${env.apiUrl}/chat`, {
@@ -174,6 +179,12 @@ const ChatPage = () => {
         )}
       </div>
       <div className="flex gap-2">
+        <button
+          className={clsx('p-2 rounded-2xl transition ')}
+          onClick={resetChat}
+        >
+          <PiTrash className="size-6" />
+        </button>
         {categories.map((cat) => (
           <button
             key={cat.id}
