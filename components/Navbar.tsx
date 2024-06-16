@@ -71,7 +71,7 @@ export function Navbar() {
             <div className="size-8 bg-fuchsia-600 text-white flex items-center justify-center text-xl rounded-full">
               {user?.username?.[0]}
             </div>
-            <NextLink href="/profile">{user?.username}</NextLink>
+            <NextLink href="/chat">{user?.username}</NextLink>
           </>
         ) : (
           <NextLink

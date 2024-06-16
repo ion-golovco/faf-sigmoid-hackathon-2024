@@ -121,7 +121,7 @@ const ChatPage = () => {
                 <Image
                   className="p-2"
                   alt="Informal"
-                  src="/kotik.svg"
+                  src="/Kotik.svg"
                   fill
                 />
               </div>
@@ -166,7 +166,7 @@ const ChatPage = () => {
               <Image
                 className="p-2"
                 alt="Informal"
-                src="/kotik.svg"
+                src="/Kotik.svg"
                 fill
               />
             </div>
