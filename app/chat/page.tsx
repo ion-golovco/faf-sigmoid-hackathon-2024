@@ -41,6 +41,10 @@ const categories = [
     name: 'Cars',
     id: 'car',
   },
+  {
+    name: 'General',
+    id: 'general',
+  }
 ];
 
 type HistoryType = {
