@@ -5,8 +5,9 @@ import { title, subtitle } from '@/components/primitives';
 
 export default function Home() {
   return (
-    <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-      <div className="inline-block max-w-lg text-center justify-center mt-20">
+    <section className="flex flex-col items-center justify-center gap-4 py-2">
+      <img src="/kotik.svg" alt="Informal" className="w-48 h-48" />
+      <div className="inline-block max-w-lg text-center justify-center">
         <h1 className={title()}>Your&nbsp;</h1>
         <h1 className={title({ color: 'violet' })}>guide&nbsp;</h1>
         <br />

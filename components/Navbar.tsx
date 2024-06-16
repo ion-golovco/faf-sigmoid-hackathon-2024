@@ -57,7 +57,7 @@ export function Navbar() {
         <NavbarBrand as="li" className="gap-3 max-w-fit">
           <NextLink className="flex justify-start items-center gap-1" href="/">
             <Image alt="Informal" height={32} src="/logo.svg" width={32} />
-            <p className="font-semibold ml-2 text-lg">Informal</p>
+            <p className="font-semibold ml-2 text-lg">Kotik</p>
           </NextLink>
         </NavbarBrand>
       </NavbarContent>

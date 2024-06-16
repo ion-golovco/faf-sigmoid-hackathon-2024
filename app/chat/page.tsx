@@ -9,6 +9,7 @@ import clsx from 'clsx';
 import { SearchIcon } from '@/components/icons';
 import env from '@/config/env';
 import Link from 'next/link';
+import Image from 'next/image';
 
 type Product = {
   id: number;
@@ -16,6 +17,7 @@ type Product = {
   description: string;
   img?: string;
   buy?: string;
+  price?: number;
 };
 
 const categories = [
@@ -63,16 +65,19 @@ const ChatPage = () => {
     setHistory((prev) => [...prev, newUserMessage]);
     setLoading(true);
     try {
+      const prompt = `-user:${search}- ${history
+        .slice(-2)
+        .map((m) => `-${m.user}: ${m.message}-`)
+        .reverse()}`;
+      console.log(prompt);
+
       const response = await fetch(`${env.apiUrl}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: `${history
-            .slice(1)
-            .slice(-3)
-            .map((m) => m.message)} ${search}`,
+          message: prompt,
           category,
         }),
       }).then((res) => res.json());
@@ -82,7 +87,7 @@ const ChatPage = () => {
         {
           message: response.message,
           products: response?.products,
-          user: 'bot',
+          user: 'Kotik',
         },
       ]);
     } catch (error) {
@@ -111,6 +116,16 @@ const ChatPage = () => {
             key={index}
             className={`${item?.user === 'user' ? 'justify-end' : 'justify-start'} flex`}
           >
+            {item?.user !== 'user' && (
+              <div className="!w-16 mr-2 relative !h-16 flex-shrink-0 bg-default-100 text-default-900 flex items-center justify-center text-xl rounded-full">
+                <Image
+                  className="p-2"
+                  alt="Informal"
+                  src="/kotik.svg"
+                  fill
+                />
+              </div>
+            )}
             <div
               className={`${
                 item?.user === 'user'
@@ -124,18 +139,19 @@ const ChatPage = () => {
                   {item.products.map((product) => (
                     <div
                       key={product.id}
-                      className="flex gap-1 bg-default-200 p-2 rounded-2xl h-28 hover:scale-105 transition"
+                      className="lg:flex-row flex flex-col gap-2 bg-default-200 p-2 rounded-2xl hover:scale-105 transition"
                     >
                       <Link href={product.buy || '/'}>
                         <img
                           src={product.img}
                           alt={product.name}
-                          className="w-24 h-full object-cover rounded-xl"
+                          className="flex-grow h-32 object-cover rounded-xl"
                         />
                       </Link>
-                      <div>
+                      <div className="h-full flex flex-col">
                         <p className="text-sm font-semibold">{product.name}</p>
                         <p className="text-sm">{product.description}</p>
+                        <p className="text-sm font-semibold mt-auto">${product.price}</p>
                       </div>
                     </div>
                   ))}
@@ -146,8 +162,13 @@ const ChatPage = () => {
         ))}
         {loading && (
           <div className="justify-start flex">
-            <div className="bg-default-100 text-default-900 p-3 rounded-2xl">
-              <CircularProgress size="sm" />
+            <div className="bg-default-100 relative text-default-900 p-2 h-16 w-16 rounded-full animate-bounce">
+              <Image
+                className="p-2"
+                alt="Informal"
+                src="/kotik.svg"
+                fill
+              />
             </div>
           </div>
         )}

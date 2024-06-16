@@ -10,8 +10,8 @@ import { Navbar } from "@/components/Navbar";
 
 export const metadata: Metadata = {
   title: {
-    default: 'Informal',
-    template: `%s - Informal`,
+    default: 'Kotik',
+    template: `%s - Kotik`,
   },
   description: 'Simplifying your shopping choices',
   icons: {
